@@ -920,6 +920,12 @@ div.problem {
   }
 }
 
+.capa-message {
+  display: inline-block;
+  color: $gray-d1;
+  -webkit-font-smoothing: antialiased;
+}
+
 // +Problem - Actions
 // ====================
 div.problem .action {
@@ -955,12 +961,10 @@ div.problem .action {
     // border-radius: 3px;
     // padding: 8px 12px;
     // margin-top: ($baseline/2);
+    @extend .capa-message;
     @include margin-left($baseline/2);
-    display: inline-block;
     margin-top: 8px;
-    color: $gray-d1;
     font-style: italic;
-    -webkit-font-smoothing: antialiased;
   }
 }
 

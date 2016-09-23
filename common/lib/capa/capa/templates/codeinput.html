@@ -17,6 +17,9 @@
       	    style="display:none;"
             % endif
   >${value|h}</textarea>
+  <span class="cm-editor-exit-message capa-message" id="cm-editor-exit-message_${id}">
+    ${_("Press ESC then TAB or click outside of the code editor to exit")}
+  </span>
 
   <div class="grader-status" tabindex="-1">
       <span id="status_${id}"

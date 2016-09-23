@@ -623,10 +623,10 @@ class @Problem
               return false
           }
         }
-      id = element.attr('id').replace(/^input_/,'')
-      CodeMirrorInpuTextArea = CodeMirrorEditor.getInputField()
-      CodeMirrorInpuTextArea.setAttribute('id', 'cm-textarea-' + id)
-      CodeMirrorInpuTextArea.setAttribute('aria-describedby', 'status_' + id)
+      id = element.attr('id').replace(/^input_/, '')
+      CodeMirrorTextArea = CodeMirrorEditor.getInputField()
+      CodeMirrorTextArea.setAttribute('id', 'cm-textarea-' + id)
+      CodeMirrorTextArea.setAttribute('aria-describedby', 'status_' + id + ' ' + 'cm-editor-exit-message_' + id)
       return CodeMirrorEditor
 
   inputtypeShowAnswerMethods:
