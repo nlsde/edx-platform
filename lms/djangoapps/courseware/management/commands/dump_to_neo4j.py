@@ -140,20 +140,21 @@ class Command(BaseCommand):
     """
     Command to dump modulestore data to neo4j
 
-    Takes the following positional arguments:
+    Takes the following named arguments:
       host: the host of the neo4j server
       port: the port on the server that accepts https requests
       user: the username for the neo4j user
       password: the user's password
 
     Example usage:
-      python manage.py lms dump_to_neo4j host 7473 user password --settings=aws
+      python manage.py lms dump_to_neo4j --host localhost --port 7473 \
+        --user user --password password --settings=aws
     """
     def add_arguments(self, parser):
-        parser.add_argument('host', type=unicode)
-        parser.add_argument('port', type=int)
-        parser.add_argument('user', type=unicode)
-        parser.add_argument('password', type=unicode)
+        parser.add_argument('--host', type=unicode)
+        parser.add_argument('--port', type=int)
+        parser.add_argument('--user', type=unicode)
+        parser.add_argument('--password', type=unicode)
 
     @staticmethod
     def add_to_transaction(neo4j_entities, transaction):
