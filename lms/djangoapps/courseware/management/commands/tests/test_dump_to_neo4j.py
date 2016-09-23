@@ -51,7 +51,13 @@ class TestDumpToNeo4jCommand(TestDumpToNeo4jCommandBase):
         mock_transaction = mock.Mock()
         mock_graph.begin.return_value = mock_transaction
 
-        call_command('dump_to_neo4j', 'mock_host', '7473', 'mock_user', 'mock_password')
+        call_command(
+            'dump_to_neo4j',
+            host='mock_host',
+            port=7473,
+            user='mock_user',
+            password='mock_password',
+        )
 
         self.assertEqual(mock_graph.begin.call_count, 2)
         self.assertEqual(mock_transaction.commit.call_count, 2)
@@ -73,20 +79,17 @@ class TestDumpToNeo4jCommand(TestDumpToNeo4jCommandBase):
         mock_graph.begin.return_value = mock_transaction
         mock_transaction.run.side_effect = ValueError('Something went wrong!')
 
-        call_command('dump_to_neo4j', 'mock_host', '7473', 'mock_user', 'mock_password')
+        call_command(
+            'dump_to_neo4j',
+            host='mock_host',
+            port=7473,
+            user='mock_user',
+            password='mock_password',
+        )
 
         self.assertEqual(mock_graph.begin.call_count, 2)
         self.assertEqual(mock_transaction.commit.call_count, 0)
         self.assertEqual(mock_transaction.rollback.call_count, 2)
-
-    @ddt.data(0, 3, 5)
-    def test_dump_to_neo4j_no_config(self, number_of_args):
-        """
-        Tests that the command errors out if the incorrect number of arguments
-        is provided
-        """
-        with self.assertRaises(CommandError):
-            call_command('dump_to_neo4j', *['arg' for __ in xrange(number_of_args)])
 
 
 @ddt.ddt
