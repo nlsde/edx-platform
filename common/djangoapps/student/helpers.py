@@ -2,8 +2,9 @@
 from datetime import datetime
 import urllib
 
-from pytz import UTC
 from django.core.urlresolvers import reverse, NoReverseMatch
+from pytz import UTC
+from provider.oauth2.models import AccessToken
 
 import third_party_auth
 from lms.djangoapps.verify_student.models import VerificationDeadline, SoftwareSecurePhotoVerification
@@ -230,3 +231,10 @@ def get_next_url_for_login_page(request):
         # be saved in the session as part of the pipeline state. That URL will take priority
         # over this one.
     return redirect_to
+
+
+def invalidate_access_token(user):
+    """
+    Given a user and email will invalidate all the access tokens associated.
+    """
+    AccessToken.objects.filter(user=user).delete()

@@ -3,7 +3,7 @@
 import logging
 import json
 import urlparse
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -17,14 +17,8 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
-from django.utils import timezone
 from django_countries import countries
 from edxmako.shortcuts import render_to_response
-from provider.oauth2.models import (
-    Client,
-    AccessToken,
-    RefreshToken
-)
 import pytz
 
 from commerce.models import CommerceConfiguration
@@ -46,7 +40,7 @@ from student.views import (
     signin_user as old_login_view,
     register_user as old_register_view
 )
-from student.helpers import get_next_url_for_login_page
+from student.helpers import get_next_url_for_login_page, invalidate_access_token
 import third_party_auth
 from third_party_auth import pipeline
 from third_party_auth.decorators import xframe_allow_whitelisted
@@ -174,11 +168,12 @@ def password_change_request_handler(request):
     user = request.user
     # Prefer logged-in user's email
     email = user.email if user.is_authenticated() else request.POST.get('email')
+    user = User.objects.get(email=email) if not user.is_authenticated() else user
 
     if email:
         try:
             request_password_change(email, request.get_host(), request.is_secure())
-            _invalidate_access_token(user, email)
+            invalidate_access_token(user)
         except UserNotFound:
             AUDIT_LOG.info("Invalid password reset attempt")
             # Increment the rate limit counter
@@ -315,22 +310,6 @@ def _external_auth_intercept(request, mode):
         return external_auth_login(request)
     elif mode == "register":
         return external_auth_register(request)
-
-
-def _invalidate_access_token(user, email):
-    """
-    Given a user and email will invalidate all the access tokens associated.
-    """
-    user = User.objects.get(email=email) if not user.is_authenticated() else user
-    clients = Client.objects.all()
-    for client in clients:
-        access_tokens = AccessToken.objects.filter(
-            user=user, client=client, expires__gt=timezone.now()
-        )
-        for access_token in access_tokens:
-            RefreshToken.objects.create(user=user, access_token=access_token, client=client)
-            access_token.expires = timezone.now() - timedelta(milliseconds=1)
-            access_token.save()
 
 
 def get_user_orders(user):
