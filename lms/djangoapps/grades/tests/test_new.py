@@ -378,7 +378,6 @@ class TestMultipleProblemTypesSubsectionScores(ModuleStoreTestCase, ProblemSubmi
         self.assertEqual(score.all_total.earned, expected_earned)
         self.assertEqual(score.all_total.possible, expected_possible)
 
-
     @ddt.data(
         ({u'graded': True}, 1.25, 2.5),
         ({u'graded': False}, 0.0, 0.0),
@@ -401,4 +400,3 @@ class TestMultipleProblemTypesSubsectionScores(ModuleStoreTestCase, ProblemSubmi
         score = self._get_score_with_alterations(alterations)
         self.assertEqual(score.all_total.earned, expected_earned)
         self.assertEqual(score.all_total.possible, expected_possible)
-
